@@ -484,7 +484,7 @@ messages: async ({ id }, args, context) => {
     ....
 ```
 * Lib GraphQL Resolvers (https://github.com/lucasconstantino/graphql-resolvers)
-````
+```
 messages: combineResolvers(isAdmin, async ({ id }, args, context) => { ...
 ```
 * graphql-shield https://github.com/maticzav/graphql-shield
