@@ -6,7 +6,7 @@ customTheme : "custom"
 
 ---
 
-<img data-src="https://graphql.github.io/img/logo.svg" width="20%" style="border:0;"/>
+<img src="https://graphql.github.io/img/logo.svg" width="20%" style="border:0;"/>
 
 # GraphQL
 
@@ -209,7 +209,7 @@ https://www.apollographql.com/docs/apollo-server/
 
 ### Diferenças entre o GraphQL e o REST
 
-<img data-src="https://cdn-images-1.medium.com/max/800/1*qpyJSVVPkd5c6ItMmivnYg.png" />
+<img src="https://cdn-images-1.medium.com/max/800/1*qpyJSVVPkd5c6ItMmivnYg.png" />
 <small> https://blog.apollographql.com/graphql-vs-rest-5d425123e34b </small>
 
 --
@@ -241,7 +241,7 @@ query {
 ### Apollo Server
 
 > "O Apollo Server é a melhor maneira de criar rapidamente uma API de auto-documentada e pronta para produção para clientes GraphQL, usando dados de qualquer origem."
-<img data-src="https://raw.githubusercontent.com/apollographql/apollo-server/apollo-server%402.4.8/docs/source/images/index-diagram.svg?sanitize=true" />
+<img src="https://raw.githubusercontent.com/apollographql/apollo-server/apollo-server%402.4.8/docs/source/images/index-diagram.svg?sanitize=true" />
 
 ---
 
@@ -258,7 +258,6 @@ yarn add mongoose
 
 ---
 
-### Hora do código
 #### Hello World
 
 ```js
@@ -296,11 +295,10 @@ app.listen({ port: 4000 }, () =>
 ### GraphQL Playground
 <small>Ao subir o servidor apollo é disponibilizado no ambiente de desenvolvimento uma IDE para realizar consultas. (http://localhost:4000/graphql)<small>
 
-<img data-src="https://camo.githubusercontent.com/1a26385e3543849c561cfafd0c25de791a635570/68747470733a2f2f692e696d6775722e636f6d2f41453557364f572e706e67" />
+<img src="https://camo.githubusercontent.com/1a26385e3543849c561cfafd0c25de791a635570/68747470733a2f2f692e696d6775722e636f6d2f41453557364f572e706e67" />
 
 ---
 
-### Hora do código
 #### Definindo o schema
 
 ```js
@@ -335,7 +333,6 @@ const typeDefs = gql`
 
 ---
 
-### Hora do código
 #### Codificando os resolvers
 
 ```js
@@ -359,7 +356,6 @@ const resolvers = {
 
 ---
 
-### Hora do código
 #### Codificando os resolvers
 
 ```js
@@ -505,8 +501,184 @@ messages: combineResolvers(isAdmin, async ({ id }, args, context) => { ...
   type User { ... }
 ```
 
-<img data-src="graphql_schema.png" />
+<img src="graphql_schema.png" />
 
 ---
 
-# Perguntas ???
+### Código Fonte
+
+https://github.com/souzadriano/graphql-presentation-code/server
+
+---
+
+### Apollo Client
+
+> O Apollo Client é a melhor maneira de usar o GraphQL para construir aplicativos clientes. O cliente foi projetado para ajudá-lo a criar rapidamente uma interface de usuário que busca dados com o GraphQL e pode ser usado com qualquer front-end de JavaScript.
+https://www.apollographql.com/docs/react/
+
+---
+
+### Hora do código
+#### Dependências necessárias para este exemplo:
+
+```
+yarn add graphql graphql-tag
+
+yarn add react-apollo apollo-client apollo-link-error apollo-link-http apollo-cache-inmemory
+
+```
+
+---
+
+#### Configurando o Apollo Client no React.JS
+
+```js
+
+import { ... }
+const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' });
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.map(({ message, locations, path }) => console.log(message));
+  }
+  if (networkError) console.log(networkError);
+});
+const link = ApolloLink.from([errorLink, httpLink]);
+const cache = new InMemoryCache();
+const client = new ApolloClient({ link, cache });
+
+ReactDOM.render(
+  <ApolloProvider client={client}>
+    <App />
+  </ApolloProvider>,
+  document.getElementById("root")
+);
+
+```
+
+---
+
+#### Definindo as Queries
+
+```js
+const UsersQuery = gql`
+  query users($limit: Int!, $offset: Int!) {
+    users(limit: $limit, offset: $offset) {
+      id
+      name
+    }
+  }
+`;
+const MessagesQuery = gql`
+  query messages {
+    messages {
+      id
+      text
+      user {
+        id
+        name
+      }
+    }
+  }
+`;
+```
+
+---
+
+#### Definindo a Mutation
+
+```js
+const MessagesMutation = gql`
+  mutation createMessage($text: String!, $userId: ID!){
+    createMessage(text: $text, userId: $userId) {
+      id
+      text
+    }
+  }
+`;
+```
+
+---
+
+#### Construindo a listagem - QUERY TAG
+
+```
+<Query query={MessagesQuery} variables={{ limit: 100, offset: 0 }}>
+  {({ loading, error, data, fetchMore }) => {
+    if (loading || error) return null;
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Message</th>
+            <th>User</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.messages.map(message => (
+            <tr key={message.id}>
+              <td>{message.text}</td>
+              <td>{message.user.name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }}
+</Query>
+
+````
+
+---
+
+#### Construindo um formulário
+
+```js
+  <div>
+    <label>Message</label><br />
+    <textarea value={this.state.text} onChange={event => this.setState({ text: event.target.value })} />
+  </div>
+  <Query query={UsersQuery} variables={variables}>
+    {({ loading, error, data, fetchMore }) => {
+      let options = null;
+      if (!(loading || error)) {
+        const { users } = data;
+        options = users.map(user => ( <option value={user.id} key={user.id}> {user.name} </option>));
+      }
+      return (
+        <div>
+          <label>User</label> <br />
+          <select className="form-control" value={this.state.userId} onChange={event => this.setState({ userId: event.target.value })}>
+            <option value="">Select a User</option>
+            {options}
+          </select>
+        </div>
+      );
+    }}
+  </Query>
+  ...
+```
+
+--
+
+#### Construindo um formulário - MUTATION TAG
+
+```js
+   ...
+   <Mutation
+    mutation={MessagesMutation}
+    variables={{ text: this.state.text, userId: this.state.userId }}
+    update={() => this.setState({text: '', userId: ''})}
+    refetchQueries={[{ query: MessagesQuery, variables }]}>
+    {createMessage => ( <button type="button" onClick={createMessage}>Create</button>)}
+  </Mutation>
+
+```
+
+---
+
+### Código Fonte
+
+https://github.com/souzadriano/graphql-presentation-code/client
+
+---
+
