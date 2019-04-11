@@ -132,36 +132,36 @@ https://graphql.org
 
 ```json
             {
-            "data": {
-                "users": [
-                {
-                    "id": "5c8c0bf3de6bd4135eb34ba2",
-                    "name": "Adriano de Souza",
-                    "age": 30,
-                    "messages": [{
-                        "id": "34dsfdsf43tdfgjg6778",
-                        "text": "Hello World!"
-                    }]
-                },
-                ]
+              "data": {
+                  "users": [
+                  {
+                      "id": "5c8c0bf3de6bd4135eb34ba2",
+                      "name": "Adriano de Souza",
+                      "age": 30,
+                      "messages": [{
+                          "id": "34dsfdsf43tdfgjg6778",
+                          "text": "Hello World!"
+                      }]
+                  },
+                  ]
+              }
             }
-            }
-            ```
+```
 
 ---
 
 ### Definindo Alterações
 
-```js
+```
 
-            type Mutation {
-                createUser(name: String!, age: Int): User
-                updateUser(id: ID!, name: String!, age: Int): User
-                deleteUser(id: ID!): Boolean
+          type Mutation {
+              createUser(name: String!, age: Int): User
+              updateUser(id: ID!, name: String!, age: Int): User
+              deleteUser(id: ID!): Boolean
 
-                createMessage(message: String!, userId: ID!): Message
-                deleteMessage(id: ID!): Boolean
-            }
+              createMessage(message: String!, userId: ID!): Message
+              deleteMessage(id: ID!): Boolean
+          }
 
 ```
 
