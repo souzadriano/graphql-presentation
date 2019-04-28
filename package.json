@@ -1,0 +1,23 @@
+{
+  "name": "graphql-presentation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "graphql",
+    "apollo-graphql",
+    "presentation"
+  ],
+  "author": "Adriano de Souza",
+  "license": "MIT",
+  "engines": {
+    "node": ">=9.0.0"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "helmet": "^3.16.0"
+  }
+}
